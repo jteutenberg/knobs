@@ -2,18 +2,18 @@ package session
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/jteutenberg/understate/actions"
 )
 
-func (s *Session) handleActionDefinition(actionDef *actions.Action) error {
-	fmt.Fprintln(s.Out, "Action definition: ", actionDef.Signature.String())
+func (s *Session) handleActionDefinition(actionDef *actions.Action) (<-chan string, error) {
+	fmt.Fprintln(s.Err, "Action definition: ", actionDef.Signature.String())
 	s.Actions.AddAction(actionDef)
-	return nil
+	return nil, nil
 }
 
-func (s *Session) handleActionQuery(act *actions.Action) error {
-	fmt.Fprintln(s.Out, "Action query: ", act.Signature.String())
-	fmt.Fprintln(s.Out, " Applicable: ", act.IsApplicable(s.KB))
-	return nil
+func (s *Session) handleActionQuery(act *actions.Action) (<-chan string, error) {
+	fmt.Fprintln(s.Err, "Action query: ", act.Signature.String())
+	return singleAnswer(strconv.FormatBool(act.IsApplicable(s.KB))), nil
 }
